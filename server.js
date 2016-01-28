@@ -4,7 +4,8 @@ var express = require('express'),
     bodyParser = require('body-parser'),
     errorHandler = require('errorhandler'),
     app = express(),
-    chrono = require('chrono-node');
+    chrono = require('chrono-node'),
+    timemod = require(__dirname+'/public/js/timemod.js');
      
 app.set('view engine', 'ejs');     
 require('dotenv').load();
@@ -25,47 +26,12 @@ app.get("/", function (req, res) {
     res.sendfile('index.html');
 });
 
-app.get("/:timestamp", function (req, res){
-    var theMonth = "";
-    var theDay = "";
-    var theYear = "";
-    var theStamp = req.params.timestamp;
-    var unixDate = 0;
-    var naturalDate = 0;
-    if (isNaN(theStamp)) {
-        console.log("in is not a number");
-        var textDate = chrono.parseDate(theStamp);
-        if (textDate != null){
-            console.log("the date is valid");
-            textDate = (textDate).toString();
-            unixDate = Date.parse(textDate);
-            theMonth = textDate.substr(4, 3);
-            theDay = textDate.substr(8, 2);
-            theYear = textDate.substr(11, 4);
-            naturalDate = (theMonth + " "+ theDay+ ", "+ theYear);
-        } else {
-            console.log("in garbage collection");
-            naturalDate = null; 
-            unixDate = null;
-        }
-    } else {
-        console.log("in unix timestamp");
-        unixDate = theStamp;
-        var milli = theStamp*1000;
-        var utonDate = new Date(milli);
-       var utc = utonDate.toISOString();
-        var subDate= utc.substr(0, 10);
-        var conOne = chrono.parseDate(subDate);
-        conOne = (conOne).toString();
-        theMonth = conOne.substr(4, 3);
-        theDay = conOne.substr(8, 2);
-        theYear = conOne.substr(11, 4);
-            naturalDate = (theMonth + " "+ theDay+ ", "+ theYear);
-    }
-    var finalDates = '{"unix":'+unixDate+', "natural":"'+naturalDate+'"}';
-    console.log(finalDates);
-    res.render('timestamp', {finalDates:finalDates});
+app.get("/*", function (req, res){
+  console.log(timemod.convertstamp(req));
+  var finalDates = timemod.convertstamp(req);
+  res.render('timestamp', {finalDates:finalDates});
 });
+
 
 
 
