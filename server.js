@@ -27,7 +27,6 @@ app.get("/", function (req, res) {
 });
 
 app.get("/*", function (req, res){
-  console.log(timemod.convertstamp(req));
   var finalDates = timemod.convertstamp(req);
   res.render('timestamp', {finalDates:finalDates});
 });
